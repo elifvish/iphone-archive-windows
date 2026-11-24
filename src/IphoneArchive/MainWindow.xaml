@@ -1,0 +1,219 @@
+<Window x:Class="IphoneArchive.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="iPhone Archive" Icon="Assets/app-icon.ico"
+        Height="860" Width="1280" MinHeight="720" MinWidth="1040"
+        WindowStartupLocation="CenterScreen">
+  <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="244" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+
+    <Border Grid.Column="0" Background="#0E1728">
+      <Grid Margin="20,24,20,20">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="54" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+          <Border Width="46" Height="46" CornerRadius="12" Background="#17233A" VerticalAlignment="Top">
+            <Image Source="Assets/app-icon.png" Width="40" Height="40" Stretch="Uniform" />
+          </Border>
+          <StackPanel Grid.Column="1" Margin="10,2,0,0">
+            <TextBlock Text="iPhone Archive" Foreground="White" FontWeight="SemiBold" FontSize="17" />
+            <TextBlock Text="Device &amp; photo manager" Foreground="#8F9BB2" FontSize="11" Margin="0,4,0,0" />
+          </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1" Background="#17233A" CornerRadius="10" Padding="11,9" Margin="0,24,0,20">
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Ellipse x:Name="ConnectionDot" Width="9" Height="9" Fill="#D97706" Margin="0,0,9,0" />
+            <TextBlock x:Name="ConnectionText" Grid.Column="1" Text="Waiting for device" Foreground="#DCE3F0" TextTrimming="CharacterEllipsis" />
+          </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="2">
+          <TextBlock Text="WORKSPACE" Foreground="#68758C" FontSize="10" FontWeight="Bold" Margin="10,0,0,6" />
+          <RadioButton x:Name="LibraryNav" GroupName="Navigation" Tag="0" IsChecked="True" Checked="Navigation_Checked" Style="{StaticResource NavButton}" Content="▦   Photo library" />
+          <RadioButton x:Name="ExportNav" GroupName="Navigation" Tag="1" Checked="Navigation_Checked" Style="{StaticResource NavButton}" Content="⇩   Export &amp; backup" />
+          <RadioButton x:Name="DeviceNav" GroupName="Navigation" Tag="2" Checked="Navigation_Checked" Style="{StaticResource NavButton}" Content="◇   Device center" />
+          <RadioButton x:Name="AboutNav" GroupName="Navigation" Tag="3" Checked="Navigation_Checked" Style="{StaticResource NavButton}" Content="ⓘ   About &amp; safety" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3">
+          <Border Background="#142033" CornerRadius="10" Padding="12" Margin="0,0,0,14">
+            <StackPanel>
+              <TextBlock Text="SAFE MODE" Foreground="#6EE7B7" FontSize="10" FontWeight="Bold" />
+              <TextBlock Text="Read-only iPhone access. Verified local writes with resumable transfers." Foreground="#9AA8BF" FontSize="11" TextWrapping="Wrap" LineHeight="17" Margin="0,5,0,0" />
+            </StackPanel>
+          </Border>
+          <TextBlock Text="Version 2.0" Foreground="#657289" FontSize="11" HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions><RowDefinition Height="76" /><RowDefinition Height="*" /><RowDefinition Height="44" /></Grid.RowDefinitions>
+
+      <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+        <Grid Margin="28,0,30,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock x:Name="WorkspaceTitle" Text="Photo library" FontSize="23" FontWeight="SemiBold" />
+            <TextBlock x:Name="WorkspaceSubtitle" Text="Browse accessible media and choose exactly what to export." Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,4,0,0" />
+          </StackPanel>
+          <Button x:Name="RefreshButton" Grid.Column="1" Content="↻  Refresh devices" Click="RefreshDevices_Click" VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="1" Margin="28,22,30,22">
+        <!-- Photo library -->
+        <Grid x:Name="PageLibrary">
+          <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+          <Border Style="{StaticResource CardStyle}">
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+              <StackPanel>
+                <TextBlock Text="CONNECTED DEVICE" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold" />
+                <ComboBox x:Name="DeviceCombo" DisplayMemberPath="DisplayName" SelectionChanged="DeviceCombo_SelectionChanged" MinWidth="340" Margin="0,7,0,0" />
+                <TextBlock x:Name="DeviceHint" Text="Connect, unlock and trust this PC." Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,6,0,0" />
+              </StackPanel>
+              <Button x:Name="ScanLibraryButton" Grid.Column="1" Content="Scan library" Style="{StaticResource PrimaryButton}" Click="ScanLibrary_Click" Margin="16,19,0,0" VerticalAlignment="Top" />
+              <Button Grid.Column="2" Content="Export selected  →" Click="GoToExport_Click" Margin="9,19,0,0" VerticalAlignment="Top" />
+            </Grid>
+          </Border>
+
+          <Grid Grid.Row="1" Margin="0,14,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource MetricCardStyle}"><StackPanel><TextBlock Text="LIBRARY ITEMS" Foreground="{StaticResource MutedBrush}" FontSize="10" FontWeight="Bold" /><TextBlock x:Name="ItemCountText" Text="—" FontSize="22" FontWeight="SemiBold" Margin="0,5,0,0" /></StackPanel></Border>
+            <Border Grid.Column="2" Style="{StaticResource MetricCardStyle}"><StackPanel><TextBlock Text="ACCESSIBLE SIZE" Foreground="{StaticResource MutedBrush}" FontSize="10" FontWeight="Bold" /><TextBlock x:Name="LibrarySizeText" Text="—" FontSize="22" FontWeight="SemiBold" Margin="0,5,0,0" /></StackPanel></Border>
+            <Border Grid.Column="4" Style="{StaticResource MetricCardStyle}"><StackPanel><TextBlock Text="SELECTED" Foreground="{StaticResource MutedBrush}" FontSize="10" FontWeight="Bold" /><TextBlock x:Name="SelectedCountText" Text="—" FontSize="22" FontWeight="SemiBold" Margin="0,5,0,0" /></StackPanel></Border>
+          </Grid>
+
+          <Grid Grid.Row="2" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="145" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" ToolTip="Search filenames" />
+            <ComboBox x:Name="TypeFilter" Grid.Column="1" SelectedIndex="0" SelectionChanged="TypeFilter_SelectionChanged" Margin="9,0,0,0">
+              <ComboBoxItem Content="All media" /><ComboBoxItem Content="Photos" /><ComboBoxItem Content="Videos" /><ComboBoxItem Content="ProRAW" />
+            </ComboBox>
+            <Button x:Name="SelectAllButton" Grid.Column="2" Content="Select all" Click="SelectAll_Click" Margin="9,0,0,0" />
+            <Button x:Name="SelectNoneButton" Grid.Column="3" Content="Clear" Click="SelectNone_Click" Margin="9,0,0,0" />
+          </Grid>
+
+          <Border Grid.Row="3" Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="11">
+            <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+              <TextBlock x:Name="LibrarySummaryText" Text="Scan the connected iPhone to load its accessible photo library." Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="14,11" />
+              <DataGrid x:Name="LibraryGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                        HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderThickness="0,1,0,0" SelectionMode="Extended"
+                        IsReadOnly="False" EnableRowVirtualization="True" EnableColumnVirtualization="True"
+                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                        ScrollViewer.CanContentScroll="True">
+                <DataGrid.Columns>
+                  <DataGridCheckBoxColumn Header="Export" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="70" />
+                  <DataGridTextColumn Header="Filename" Binding="{Binding OriginalFileName}" Width="*" IsReadOnly="True" />
+                  <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="82" IsReadOnly="True" />
+                  <DataGridTextColumn Header="Captured" Binding="{Binding CaptureTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" Width="160" IsReadOnly="True" />
+                  <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="95" IsReadOnly="True" />
+                </DataGrid.Columns>
+              </DataGrid>
+            </Grid>
+          </Border>
+        </Grid>
+
+        <!-- Export -->
+        <ScrollViewer x:Name="PageExport" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Style="{StaticResource CardStyle}">
+              <StackPanel>
+                <TextBlock Text="ARCHIVE DESTINATION" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold" />
+                <TextBlock Text="Choose where verified files are stored" FontSize="18" FontWeight="SemiBold" Margin="0,6,0,12" />
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                  <TextBox x:Name="DestinationBox" />
+                  <Button Grid.Column="1" Content="Browse…" Margin="9,0,0,0" Click="Browse_Click" />
+                </Grid>
+                <TextBlock Text="The resume database stays in this folder so completed transfers are not downloaded twice." Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,8,0,0" />
+              </StackPanel>
+            </Border>
+
+            <Grid Margin="0,14,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="1*" /><ColumnDefinition Width="14" /><ColumnDefinition Width="1.1*" /></Grid.ColumnDefinitions>
+              <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                  <TextBlock Text="EXPORT FORMAT" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold" />
+                  <TextBlock Text="Photo compatibility" FontSize="18" FontWeight="SemiBold" Margin="0,6,0,12" />
+                  <ComboBox x:Name="HeicModeCombo" SelectionChanged="HeicModeCombo_SelectionChanged">
+                    <ComboBoxItem Content="Original HEIC only" /><ComboBoxItem Content="HEIC + JPEG (quality 100)" /><ComboBoxItem Content="JPEG only — no HEIC copied" />
+                  </ComboBox>
+                  <Border Background="{StaticResource AccentSoftBrush}" CornerRadius="9" Padding="11" Margin="0,11,0,0"><TextBlock x:Name="FormatHint" Foreground="#3730A3" FontSize="11" TextWrapping="Wrap" /></Border>
+                </StackPanel>
+              </Border>
+              <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                  <TextBlock Text="ORGANIZATION &amp; INTEGRITY" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold" />
+                  <TextBlock Text="Safe archive options" FontSize="18" FontWeight="SemiBold" Margin="0,6,0,8" />
+                  <CheckBox x:Name="OrganizeCheck" IsChecked="True" Content="Create year and month folders" />
+                  <CheckBox x:Name="PrefixCheck" IsChecked="True" Content="Prefix filenames with capture time" />
+                  <CheckBox x:Name="VerifyCheck" IsChecked="True" Content="Verify every completed copy with SHA-256" />
+                </StackPanel>
+              </Border>
+            </Grid>
+
+            <Border Style="{StaticResource CardStyle}">
+              <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                  <StackPanel><TextBlock Text="TRANSFER" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold" /><TextBlock x:Name="TransferTitle" Text="Ready to export" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0" /></StackPanel>
+                  <TextBlock x:Name="PercentText" Grid.Column="1" Text="0%" FontSize="19" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Bottom" />
+                </Grid>
+                <ProgressBar x:Name="TransferProgress" Grid.Row="1" Height="8" Minimum="0" Maximum="100" Value="0" Foreground="{StaticResource AccentBrush}" Background="#E8ECF3" BorderThickness="0" Margin="0,14,0,0" />
+                <Grid Grid.Row="2" Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                  <StackPanel><TextBlock x:Name="CurrentFileText" Text="No transfer running" TextTrimming="CharacterEllipsis" /><TextBlock x:Name="StatsText" Text="0 copied  •  0 JPEGs  •  0 skipped  •  0 errors" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0" /></StackPanel>
+                  <Button x:Name="CancelButton" Grid.Column="1" Content="Cancel safely" Visibility="Collapsed" Click="Cancel_Click" Margin="12,0,0,0" />
+                </Grid>
+                <Grid Grid.Row="3" Margin="0,18,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                  <TextBlock Text="Temporary files are finalized only after verification succeeds." Foreground="{StaticResource MutedBrush}" FontSize="11" VerticalAlignment="Center" />
+                  <Button x:Name="StartButton" Grid.Column="1" Content="Start verified export  →" Style="{StaticResource PrimaryButton}" Click="StartExport_Click" Padding="22,11" />
+                </Grid>
+              </Grid>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Device center -->
+        <ScrollViewer x:Name="PageDevice" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Style="{StaticResource CardStyle}">
+              <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="CONNECTION HEALTH" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold" /><TextBlock Text="Windows device diagnostics" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,5" /><TextBlock x:Name="HealthText" Text="Refresh devices to run a connection check." Foreground="{StaticResource MutedBrush}" /></StackPanel>
+                <Button Grid.Column="1" Content="Open diagnostic folder" Click="OpenDiagnostics_Click" VerticalAlignment="Center" />
+              </Grid>
+            </Border>
+            <TextBlock Text="CAPABILITIES" Foreground="{StaticResource MutedBrush}" FontSize="10" FontWeight="Bold" Margin="2,18,0,8" />
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+              <Border Style="{StaticResource CardStyle}"><StackPanel><TextBlock Text="✓  Photo archive" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" FontSize="16" /><TextBlock Text="Browse, select, resume, verify, organize, preserve originals, convert HEIC and keep Live Photo video components." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" LineHeight="20" Margin="0,8,0,0" /></StackPanel></Border>
+              <Border Grid.Column="2" Style="{StaticResource CardStyle}"><StackPanel><TextBlock Text="◷  Apple backup explorer" Foreground="{StaticResource WarningBrush}" FontWeight="SemiBold" FontSize="16" /><TextBlock Text="Messages, contacts, calls, notes, apps and full restore require a separate Apple Mobile Device protocol module. They are not simulated in this build." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" LineHeight="20" Margin="0,8,0,0" /></StackPanel></Border>
+            </Grid>
+            <Grid Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+              <Border Style="{StaticResource CardStyle}"><StackPanel><TextBlock Text="✓  Memory safeguards" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" FontSize="16" /><TextBlock x:Name="MemoryText" Text="Managed memory will appear after startup." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" LineHeight="20" Margin="0,8,0,0" /></StackPanel></Border>
+              <Border Grid.Column="2" Style="{StaticResource CardStyle}"><StackPanel><TextBlock Text="✓  Non-destructive workflow" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" FontSize="16" /><TextBlock Text="This release never deletes, rearranges or writes media to the phone. Device-changing tools remain disabled until they can be independently verified." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" LineHeight="20" Margin="0,8,0,0" /></StackPanel></Border>
+            </Grid>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- About -->
+        <ScrollViewer x:Name="PageAbout" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Style="{StaticResource CardStyle}">
+              <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="88" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <Image Source="Assets/app-icon.png" Width="72" Height="72" Stretch="Uniform" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="iPhone Archive 2.0" FontSize="24" FontWeight="SemiBold" /><TextBlock Text="A local-first Windows photo archive built for safe, resumable transfers." Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0" /></StackPanel>
+              </Grid>
+            </Border>
+            <Border Style="{StaticResource CardStyle}" Margin="0,14,0,0">
+              <StackPanel><TextBlock Text="What this build guarantees" FontSize="18" FontWeight="SemiBold" /><TextBlock Text="• Bounded pooled transfer buffers and throttled UI progress updates&#x0a;• Iterative WPD scanning with reusable property collections&#x0a;• SHA-256 verification, safe temporary files and resumable manifests&#x0a;• No destructive phone operations&#x0a;• Local processing — media is not uploaded to an app server" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" LineHeight="23" Margin="0,10,0,0" /></StackPanel>
+            </Border>
+            <Border Background="#FFF7ED" BorderBrush="#FED7AA" BorderThickness="1" CornerRadius="12" Padding="18" Margin="0,14,0,0"><TextBlock Text="Important: iCloud-only originals may not be available through USB. Keep the iPhone unlocked, use a data-capable cable, and choose Keep Originals in iPhone Photos transfer settings for archival fidelity." Foreground="#9A3412" TextWrapping="Wrap" LineHeight="20" /></Border>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+
+      <Border Grid.Row="2" Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+        <Grid Margin="28,0,30,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+          <TextBlock x:Name="FooterStatus" Text="No device scan has run yet." Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" FontSize="11" TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="FooterMemory" Grid.Column="1" Text="" Foreground="#8B95A7" VerticalAlignment="Center" FontSize="11" />
+        </Grid>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>
